@@ -10,11 +10,9 @@ output:
 ---
 
 ```{r settings, echo=FALSE, message=FALSE}
-here::i_am("comp-theory-slides.Rmd")
-library(knitr)
-library(bench)
+here::i_am("PML Presentation/Partial/comp-theory-slides.Rmd")
 library(tidyverse)
-knit_engines$set("rcpp")
+knitr::knit_engines$set("rcpp")
 knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 ```
 
@@ -71,7 +69,7 @@ for (i in 1:n) {
 }
 
 # Block 4: Simple bootstrap
-for(i in 1:b) {
+for (i in 1:b) {
   # Hint: mle with BFGS takes O(n^2)
   estimate <- mle(X_1, ..., X_n, method = BFGS)
 }
@@ -113,7 +111,7 @@ library(pryr)
 x <- data.frame(matrix(runif(100 * 1e4), ncol = 100))
 medians <- vapply(x, median, numeric(1))
 
-for(i in seq_along(medians)) {
+for (i in seq_along(medians)) {
   x[, i] <- x[, i] - medians[i]
   print(c(address(x), refs(x)))
 }
@@ -129,14 +127,21 @@ for(i in seq_along(medians)) {
 ```{r explicit-copying}
 f1 <- function() { # adding ones one by one
   x <- 1.0
-  for (i in 2:10000) {x <- c(x, 1.0)}; return(x)
+  for (i in 2:10000) {
+    x <- c(x, 1.0)
+  }
+  return(x)
 }
-f2 <- function() { # define the length and type of vector first
+f2 <- function() { # define length + type of vector
   x <- numeric(10000) # can be character(), interger() etc
-  for (i in 1:10000) {x[i] <- 1.0}; return(x)
+  for (i in 1:10000) {
+    x[i] <- 1.0
+  }
+  return(x)
 }
 f3 <- function() { # vectorization
-  x <- rep(1.0, 10000); return(x)
+  x <- rep(1.0, 10000)
+  return(x)
 }
 ```
 
@@ -168,7 +173,8 @@ bench::mark( # sum two columns for each row
 ---
 
 ```{r data-types}
-x <- runif(10000); y <- rnorm(10000)
+x <- runif(10000)
+y <- rnorm(10000)
 DF <- data.frame(x = x, y = y) # dataframe
 TIB <- tibble::as_tibble(DF) # tidyverse tibble
 MAT <- cbind(x, y) # matrix
@@ -182,7 +188,7 @@ bench::mark( # sum two columns for each row
   apply(TIB, 2, sum),
   apply(MAT, 2, sum),
   colSums(MAT) # Implemented in C
-)  %>% select(expression, median)
+) %>% select(expression, median)
 ```
 
 ## Memory Prescription 2: Vectorize

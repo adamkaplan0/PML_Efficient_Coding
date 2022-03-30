@@ -1,7 +1,7 @@
 ---
 title: "RNG Slides"
 author: Adam Kaplan
-date: "March 28, 2022"
+date: "March 30, 2022"
 output: 
   beamer_presentation:
     theme: "CambridgeUS"
@@ -9,10 +9,9 @@ output:
     incremental: true
 ---
 
-```{r echo=FALSE, message=FALSE}
-here::i_am("rng-slides.Rmd")
-library(knitr)
-knit_engines$set("rcpp")
+```{r settings, echo=FALSE, message=FALSE}
+here::i_am("PML Presentation/Partial/rng-slides.Rmd")
+knitr::knit_engines$set("rcpp")
 ```
 
 ## Random number generation with Futures
@@ -26,24 +25,26 @@ knit_engines$set("rcpp")
 
 ## Random number generation in `future.apply`
 
-```{r message=FALSE}
-  library(future.apply)
-  # Set the seed
-  set.seed(02135)
-  # Specify that you want to use random numbers
-  out1 <- future_sapply(1:10, function(x) runif(1),
-    future.seed = TRUE)
+```{r rng-future_apply, message=FALSE}
+library(future.apply)
+# Set the seed
+set.seed(02135)
+# Specify that you want to use random numbers
+out1 <- future_sapply(1:10, function(x) runif(1),
+  future.seed = TRUE
+)
 ```
 
 ## Random number generation in `furrr`
 
-```{r}
-  library(furrr)
-  # Set the seed
-  set.seed(02135)
-  # Specify that you want to use random numbers
-  out2 <- future_map_dbl(1:10, ~ runif(1),
-    .options = furrr_options(seed = TRUE))
-  # Check that they are the same 
-  all(out1 == out2)
+```{r rng-furrr}
+library(furrr)
+# Set the seed
+set.seed(02135)
+# Specify that you want to use random numbers
+out2 <- future_map_dbl(1:10, ~ runif(1),
+  .options = furrr_options(seed = TRUE)
+)
+# Check that they are the same
+all(out1 == out2)
 ```

@@ -10,10 +10,9 @@ output:
 ---
 
 ```{r settings, echo=FALSE, message=FALSE}
-here::i_am("vectorization-slides.Rmd")
-library(knitr)
+here::i_am("PML Presentation/Partial/vectorization-slides.Rmd")
 library(tidyverse)
-knit_engines$set("rcpp")
+knitr::knit_engines$set("rcpp")
 knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 ```
 
