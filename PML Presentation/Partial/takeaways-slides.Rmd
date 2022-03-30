@@ -1,0 +1,25 @@
+---
+title: "Takeaways Slides"
+author: Adam Kaplan
+date: "March 30, 2022"
+output: 
+  beamer_presentation:
+    theme: "CambridgeUS"
+    colortheme: "beaver"
+    incremental: true
+---
+
+```{r settings, echo=FALSE, message=FALSE}
+here::i_am("takeaways-slides.Rmd")
+knitr::knit_engines$set("rcpp")
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+```
+
+## Key Takeaways
+
+- Choose your data types appropriately.
+- Use canned functions whenever possible and otherwise try to avoid nested for loops if possible.
+- Vectorize whenever you can.
+- Be on the lookout for explicit or implicit copying of objects.
+
+# Thank you for listening!
