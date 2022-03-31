@@ -1,0 +1,110 @@
+---
+title: "foreach Slides"
+author: Tomoya Sasaki
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  beamer_presentation:
+    theme: "CambridgeUS"
+    colortheme: "beaver"
+    # incremental: true
+
+---
+
+```{r settings, echo=FALSE, message=FALSE}
+here::i_am("PML Presentation/Partial/future.Rmd")
+library(tidyverse)
+knitr::knit_engines$set("rcpp")
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+```
+
+
+## foreach for parallel computing
+
+- A parallel/distributed computing framework for the R language
+- Enables computation across multiple CPU cores and computers
+- `foreach` runs sequentially in the absence of a parallel adapter
+- `doFuture` from `future` framework provides a useful adapter `foreach`
+
+---
+
+## Basic structure
+
+```{r}
+library(foreach)
+## by default return a list
+## where each element is an output from each iteration
+res  <- foreach (i = 1:3) %do% {
+  i + 1
+}
+res
+```
+
+---
+
+## Basic structure 2
+
+```{r}
+## you can iterate over two variables with the same length
+res <- foreach(i = 1:3, j = 11:13) %do% {
+  i + j
+}
+res
+```
+
+---
+
+## Basic structure 3
+
+```{r}
+## the output can be a vector
+res <- foreach(i = 1:3, j = 11:13, .combine = "c") %do% {
+  i + j
+}
+res
+
+## the output can be pretty flexible
+res <- foreach(i = 1:3, j = 11:13, .combine = "+") %do% {
+  i + j
+}
+res
+```
+
+---
+
+## Parallelization with `foreach` and `future`
+
+```{r}
+library(doFuture)
+registerDoFuture() ## register cores
+plan(multisession, workers = 2) ## multisession with 2 cores
+
+## compute mean while trimming values less than 0.1
+## dopar automatically detect parallel adapter
+cutoff <- 0.1
+y <- foreach(x = mtcars, .combine = "c") %dopar% {
+  mean(x, trim = cutoff)
+}
+head(y)
+```
+
+---
+
+## Some notes
+
+```{r, eval = FALSE}
+library(tidyverse)
+registerDoFuture() ## register cores
+plan(multisession, workers = 2) ## multisession with 2 cores
+
+y <- foreach(x = mtcars, .packages = c("tidyverse")) %dopar% {
+  data %>% filter(x > 0)
+}
+```
+---
+
+## xvii and foreach
+
+- Your computer usually does not have enough cores for parallel computing
+- Use xvii, which has more than 20 cores
+- The above codes work with xvii
+- Do not use too many cores, 10> would be safe
