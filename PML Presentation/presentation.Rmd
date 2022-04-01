@@ -1,16 +1,16 @@
 ---
-title: "PML Efficient Coding"
+title: "Efficient Coding in R"
 author: "Adam Kaplan / Tomoya Sasaki"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: 
   beamer_presentation:
     theme: "CambridgeUS"
     colortheme: "beaver"
-    # incremental: true
+    #incremental: true
 ---
 
 ```{r settings, echo=FALSE, message=FALSE}
-here::i_am("PML Presentation/Partial/comp-theory-slides.Rmd")
+here::i_am("PML Presentation/presentation.Rmd")
 library(tidyverse)
 knitr::knit_engines$set("rcpp")
 knitr::opts_chunk$set(message = FALSE, warning = FALSE)
@@ -33,7 +33,6 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 - Vectorization: `apply` and `purrr`
 - Parallelization: `future` and `foreach`
 - Random number generator
-
 
 # Computational Complexity
 
@@ -84,7 +83,6 @@ for (i in 1:b) {
   estimate <- mle(X_1, ..., X_n, method = BFGS)
 }
 ```
-
 
 # Memory Allocation in `R`
 
@@ -172,7 +170,6 @@ bench::mark( # sum two columns for each row
 - So what? Imagine you create a large variable (`x <- 1:1e+50`) before you create your function, then your function will also copy the large variable into memory.
 - Now on to more applied examples of why data types matter and how to vectorize in R.
 
-
 # Memory Prescriptions
 
 ## Memory Prescription 1: Data Types Matter {.build}
@@ -207,7 +204,6 @@ bench::mark( # sum two columns for each row
 
 - "Vectorize" your codes as much as you can.
 - Most `R` functions allow you to vectorize by default.
-
 
 # Vectorization: `apply` and `purrr`
 
@@ -254,30 +250,27 @@ v %>% map_dbl(~ .x * .x)
 - Of particular interest are `map_dfr` and `map_dfc`, which run a function on the input and then row/column bind the outputs together.
 - Inspired popular parallelization package `furrr` which we will introduce you to shortly.
 
-
 # Parallelize: `future` and `foreach`
 
 ## Why and when to parallelize
 
 - Enable multiple computations to take place at the same time
 - Useful when you have time-consuming, unordered tasks
-  - data cleaning
-  - bootstrap
-  - Monte Carlo simulations
-  - Any tasks with lots of loops, apply, or maps
+    - Data cleaning
+    - Bootstrap
+    - Monte Carlo simulations
+    - Any tasks with lots of loops, apply, or maps
 
 ---
 
 ## Common issues in parallel computing
 
-
 - Often need two different codes for parallel and non-parallel computing
-  - Increase potential bugs
-- Methods for parallel computing differ across operating systems and 
-different packages implements different methods 
-  - `mclapply`. `parallel`, `doParallel` etc
-  - Parallelization with `mclapply` (forking) does not work in Windows
-  - Your choice of package would decide how to run in parallel
+    - Increase potential bugs
+- Methods for parallel computing differ across operating systems and different packages implements different methods
+    - `mclapply`. `parallel`, `doParallel` etc
+    - Parallelization with `mclapply` (forking) does not work in Windows
+    - Your choice of package would decide how to run in parallel
 
 ---
 
@@ -286,13 +279,12 @@ different packages implements different methods
 - `future` provides a simple and uniform tool for async. parallel, and distributed processing in `R`
 - Same coding style between sequential and parallel tasks 
 - Users decide how to parallelize: the code does not depend on how to run in parallel
-  - Use the same code for parallel computing in different operating systems 
-  
-  <!-- - In programming, "future" can be thought as a value that will eventually become available -->
-  <!-- - `future` implements this idea -->
-  
-  
-```{r, eval=FALSE}
+    - Use the same code for parallel computing in different operating systems
+
+    <!-- - In programming, "future" can be thought as a value that will eventually become available -->
+    <!-- - `future` implements this idea -->
+
+```{r idea-behind-futures, eval=FALSE}
 f <- future(expr) ## evaluate in parallel
 r <- resolved(f) ## check if done
 v <- value(f) ## get result
@@ -302,7 +294,7 @@ v <- value(f) ## get result
 
 ## Same coding style
 
-```{r}
+```{r future-example}
 f3 <- function() {
   tmp <- rnorm(10000)
   for (i in 1:10000) {
@@ -313,23 +305,22 @@ f3 <- function() {
 
 library(future)
 future_obj <- future(f3()) ## evaluate in parallel
-
 ```
 
 ---
- 
+
 ## Choose how to parallelize
 
-- sequential: `plan(sequential)`
-- parallelize on local machine: `plan(multisession)`
-- "fork" your task (not fore Windows): `plan(multicore)`
-- multiple local or remote computers `plan(cluster)` 
+- Sequential: `plan(sequential)`
+- Parallelize on local machine: `plan(multisession)`
+- "Fork" your task (not fore Windows): `plan(multicore)`
+- Multiple local or remote computers `plan(cluster)`
 
 ---
 
 ## Combine together
 
-```{r}
+```{r future-planning}
 ## multisession using two cores: default setup uses the max # of cores
 ## print with future::availableCores()
 plan(multisession, workers = 2)
@@ -342,14 +333,14 @@ all.equal(output, output2)
 plan() ## check current plan
 ```
 
---- 
+---
 
 ## User friendly functions
 
-- Add "future_" in front of the function
+- Add `future_` in front of the function
 - Evaluate, check, get result within one function
 
-```{r, eval = FALSE}
+```{r future-lapply-example, eval = FALSE}
 ## apply / future.apply
 lapply(x, your_fun)
 
@@ -357,9 +348,11 @@ plan(multisession, workers = 2)
 future_lapply(x, your_fun)
 ```
 
-  - `furrr` package: integrate with `purrr`
+---
 
-```{r, eval = FALSE}
+- `furrr` package: integrate with `purrr`
+
+```{r furrr-example, eval = FALSE}
 ## purrr / furrr
 x %>% map(your_fun)
 
@@ -368,11 +361,10 @@ plan(sequential)
 x %>% future_map(your_fun)
 ```
 
-
 ## foreach for parallel computing
 
 - A parallel/distributed computing framework for the R language
-  - A tool for "what to parallelize"
+    - A tool for "what to parallelize"
 - Enables computation across multiple CPU cores and computers
 - `foreach` runs sequentially in the absence of a parallel adapter
 - `doFuture` from `future` framework provides a useful adapter for `foreach`
@@ -381,7 +373,7 @@ x %>% future_map(your_fun)
 
 ## Basic structure
 
-```{r}
+```{r foreach-example1}
 library(foreach)
 ## by default return a list
 ## where each element is an output from each iteration
@@ -395,7 +387,7 @@ res
 
 ## Basic structure 2
 
-```{r}
+```{r foreach-example2}
 ## you can iterate over two variables with the same length
 res <- foreach(i = 1:3, j = 11:13) %do% {
   i + j
@@ -407,7 +399,7 @@ res
 
 ## Basic structure 3
 
-```{r}
+```{r foreach-example3}
 ## the output can be a vector
 res <- foreach(i = 1:3, j = 11:13, .combine = "c") %do% {
   i + j
@@ -425,7 +417,7 @@ res
 
 ## Parallelization with `foreach` and `future`
 
-```{r}
+```{r doFuture-example1}
 library(doFuture)
 registerDoFuture() ## register cores
 plan(multisession, workers = 2) ## multisession with 2 cores
@@ -443,7 +435,7 @@ head(y)
 
 ## Some notes
 
-```{r, eval = FALSE}
+```{r doFuture-example2, eval = FALSE}
 library(tidyverse)
 registerDoFuture() ## register cores
 plan(multisession, workers = 2) ## multisession with 2 cores
@@ -458,11 +450,10 @@ y <- foreach(x = mtcars, .packages = c("tidyverse")) %dopar% {
 ## xvii and `foreach`
 
 - Your computer usually does not have enough cores for parallel computing
-  - \# of your cores = \# of processors you can run simultaneously
+    - \# of your cores = \# of processors you can run simultaneously
 - Use xvii, which has more than 20 cores
 - The above codes work with xvii
-- Do not use too many cores, 10> would be safe
-
+- Do not use too many cores
 
 # Random number generators 
 
@@ -501,7 +492,7 @@ out2 <- future_map_dbl(1:10, ~ runif(1),
 all(out1 == out2)
 ```
 
-# Conclusioin
+# Conclusion
 
 ## Key Takeaways
 
@@ -511,4 +502,3 @@ all(out1 == out2)
 - Be on the lookout for explicit or implicit copying of objects.
 
 # Thank you for listening!
-
