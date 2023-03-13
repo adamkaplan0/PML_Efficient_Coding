@@ -7,6 +7,7 @@ output:
     theme: "CambridgeUS"
     colortheme: "beaver"
     # incremental: true
+fontsize: 10pt
 ---
 
 ```{r settings, echo=FALSE, message=FALSE}
@@ -322,7 +323,7 @@ future_obj <- future(f3()) ## evaluate in parallel
 
 - sequential: `plan(sequential)`
 - parallelize on local machine: `plan(multisession)`
-- "fork" your task (not fore Windows): `plan(multicore)`
+- "fork" your task (not for Windows): `plan(multicore)`
 - multiple local or remote computers `plan(cluster)` 
 
 ---
@@ -330,14 +331,14 @@ future_obj <- future(f3()) ## evaluate in parallel
 ## Combine together
 
 ```{r}
-## multisession using two cores: default setup uses the max # of cores
-## print with future::availableCores()
+## multisession using two cores: 
+## default setup uses the max # of cores
+## print # of cores to use with future::availableCores()
 plan(multisession, workers = 2)
 
 future_obj <- future(f3()) ## evaluate in parallel
 output2 <- value(future_obj) ## get result
-
-output <- f3()
+output <- f3() ## non parallelized version
 all.equal(output, output2)
 plan() ## check current plan
 ```
@@ -347,27 +348,26 @@ plan() ## check current plan
 ## User friendly functions
 
 - Add "future_" in front of the function
-- Evaluate, check, get result within one function
+- Evaluate, check, and get result within one function
 
 ```{r, eval = FALSE}
 ## apply / future.apply
-lapply(x, your_fun)
-
 plan(multisession, workers = 2)
-future_lapply(x, your_fun)
+future_lapply(x, your_fun) ## the same as lapply(x, your_fun)
 ```
 
-  - `furrr` package: integrate with `purrr`
+- `furrr` package: integrate with `purrr`
 
 ```{r, eval = FALSE}
 ## purrr / furrr
-x %>% map(your_fun)
-
 library(furrr)
 plan(sequential)
-x %>% future_map(your_fun)
+x %>% future_map(your_fun) 
+## the same as x %>% purrr::map(your_fun)
 ```
 
+
+---
 
 ## foreach for parallel computing
 
@@ -428,31 +428,17 @@ res
 ```{r}
 library(doFuture)
 registerDoFuture() ## register cores
-plan(multisession, workers = 2) ## multisession with 2 cores
+plan(multisession, workers = 2) ## 2 cores
 
 ## compute mean while trimming values less than 0.1
-## dopar automatically detect parallel adapter
-cutoff <- 0.1
-y <- foreach(x = mtcars, .combine = "c") %dopar% {
-  mean(x, trim = cutoff)
+## %dopar% automatically detect parallel adapter
+cutoff <- 5
+y <- foreach(i = 1:10, .combine = "c") %dopar% {
+  if (i < cutoff) return(i)
 }
 head(y)
 ```
 
----
-
-## Some notes
-
-```{r, eval = FALSE}
-library(tidyverse)
-registerDoFuture() ## register cores
-plan(multisession, workers = 2) ## multisession with 2 cores
-
-## call functions explictly
-y <- foreach(x = mtcars, .packages = c("tidyverse")) %dopar% {
-  data %>% filter(x > 0)
-}
-```
 ---
 
 ## xvii and `foreach`
@@ -501,7 +487,25 @@ out2 <- future_map_dbl(1:10, ~ runif(1),
 all(out1 == out2)
 ```
 
-# Conclusioin
+## Random number generation in `foreach`
+
+```{r, eval = FALSE}
+library(foreach)
+library(doRNG) ## random number generation in foreach
+registerDoFuture() ## register cores
+plan(multisession, workers = 2) ## multisession with 2 cores
+
+## use %dorng% instead of %dopar%
+y <- foreach(i = 1:10, .combine = "c") %dorng% {
+  set.seed(i)
+  rnorm(n = 1)
+}
+head(y)
+```
+
+
+
+# Conclusion
 
 ## Key Takeaways
 
