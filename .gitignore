@@ -38,6 +38,7 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
+<<<<<<< HEAD
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
@@ -324,3 +325,7 @@ TSWLatexianTemp*
 /resources/
 *.DS_Store
 .Rhistory
+=======
+# VSCode specific folders
+.vscode/*
+>>>>>>> refs/remotes/origin/main
