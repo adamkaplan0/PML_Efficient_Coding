@@ -321,7 +321,7 @@ TSWLatexianTemp*
 /data/
 /code/*/
 *.png
-*.pdf
+# *.pdf
 /figure/
 /resources/
 *.DS_Store
