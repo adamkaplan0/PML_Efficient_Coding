@@ -1,7 +1,7 @@
 ---
 title: "Efficient Coding in R"
 author: "Adam Kaplan / Tomoya Sasaki"
-date: "`r format(Sys.time(), '%B %d, %Y')`"
+date: "March 17, 2023"
 output:
   beamer_presentation:
     theme: "CambridgeUS"
