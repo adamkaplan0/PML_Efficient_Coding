@@ -328,9 +328,9 @@ future_obj <- future::future(f3()) # Evaluate in parallel
 ## Combine together
 
 ```{r future-planning}
-#' `multisession` using two cores:
-#'    Default setup uses the max # of cores
-#'    Print # of cores to use with `future::availableCores()`
+# `multisession` using two cores:
+# Default setup uses the max # of cores
+# Print # of cores to use with `future::availableCores()`
 future::plan(future::multisession, workers = 2)
 
 future_obj <- future::future(f3()) # Evaluate in parallel
@@ -387,8 +387,8 @@ x |> furrr::future_map(your_fun)
 
 ```{r foreach-example1}
 library(foreach)
-#' By default return a list where each element
-#'  is an output from each iteration
+# By default return a list where each element
+# is an output from each iteration
 res  <- foreach::foreach (i = 1:3) %do% {
   i + 1
 }
@@ -438,8 +438,8 @@ library(doFuture)
 doFuture::registerDoFuture() # Register cores
 future::plan(future::multisession, workers = 2)
 
-#' Compute the mean while trimming values less than 0.1
-#'  %dopar% automatically detect parallel adapter
+# Compute the mean while trimming values less than 0.1
+# %dopar% automatically detect parallel adapter
 cutoff <- 5
 y <- foreach(i = 1:10, .combine = "c") %dopar% {
   if (i < cutoff) return(i)
@@ -495,6 +495,8 @@ all(out1 == out2)
 ```
 
 ## Random number generation in `foreach`
+
+* Rreproducible parallel results in `foreach` with `doRNG`
 
 ```{r rng-foreach}
 library(foreach)
