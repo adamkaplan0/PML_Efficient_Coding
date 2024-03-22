@@ -243,7 +243,7 @@ d |> purrr::map(nrow)
 library(purrr)
 v <- 1:10
 
-# We want a list as an output
+# We want a vector as an output
 sapply(v, \(x) x * x)
 
 # The tidy version
