@@ -320,8 +320,8 @@ future_obj <- future::future(f3()) # Evaluate in parallel
 
 - Sequential: `plan(sequential)`
 - Parallelize on local machine: `plan(multisession)`
-- "Fork" your task (not fore Windows): `plan(multicore)`
-- Multiple local or remote computers `plan(cluster)`
+- "Fork" your task (not for Windows): `plan(multicore)`
+- Multiple local or remote computers: `plan(cluster)`
 
 ---
 
